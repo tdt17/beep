@@ -70,7 +70,7 @@ export async function initState() {
           location.href = localStorage.getItem(SESSION_KEY_NEXT_HREF) || config.basePath
         }
         state.user = user
-      } else if (!location.pathname.startsWith(`${config.basePath}signIn`)) {
+      } else if (!location.pathname.startsWith(`${config.basePath}signIn`) && location.pathname !== `${config.basePath}logo`) {
         if (location.pathname !== `${config.basePath}signOut`) {
           localStorage.setItem(SESSION_KEY_NEXT_HREF, location.href)
         }
