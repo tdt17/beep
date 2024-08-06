@@ -11,6 +11,7 @@ import { runInAction } from 'mobx'
 import { Alert } from '@mui/material'
 import dayjs from 'dayjs'
 import { config } from './config.ts'
+import { Logo } from './routes/Logo.tsx'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
           runInAction(() => state.loadParams = { type: 'month', year: date.year(), month: date.month() })
           return null
         }
+      },
+      {
+        path: 'logo',
+        element: <Logo />
       },
       {
         path: 'signIn',
