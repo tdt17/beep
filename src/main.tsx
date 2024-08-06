@@ -1,27 +1,27 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { createBrowserRouter, redirect, RouterProvider } from "react-router-dom";
-import { checkIsSignInWithEmailLink, initState, signOut, state } from './firestore.ts';
-import Month from './routes/Month.tsx';
-import { SignInByLink } from './routes/SignInByLink.tsx';
-import { SignInByPassword } from './routes/SignInByPassword.tsx';
-import { SignInSent } from './routes/SignInSent.tsx';
-import { runInAction } from 'mobx';
-import { Alert } from '@mui/material';
-import dayjs from 'dayjs';
+import { App } from './App.tsx'
+import { createBrowserRouter, redirect, RouterProvider } from 'react-router-dom'
+import { checkIsSignInWithEmailLink, initState, signOut, state } from './firestore.ts'
+import Month from './routes/Month.tsx'
+import { SignInByLink } from './routes/SignInByLink.tsx'
+import { SignInByPassword } from './routes/SignInByPassword.tsx'
+import { SignInSent } from './routes/SignInSent.tsx'
+import { runInAction } from 'mobx'
+import { Alert } from '@mui/material'
+import dayjs from 'dayjs'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
-        path: "/",
+        path: '/',
         loader: async () => redirect(`/month`)
       },
       {
-        path: "/month",
+        path: '/month',
         element: <Month />,
         loader: async () => {
           const date = dayjs()
@@ -30,19 +30,19 @@ const router = createBrowserRouter([
         }
       },
       {
-        path: "/signIn",
+        path: '/signIn',
         element: <SignInByPassword />,
       },
       {
-        path: "/signInByLink",
+        path: '/signInByLink',
         element: <SignInByLink />,
       },
       {
-        path: "/signInSent",
+        path: '/signInSent',
         element: <SignInSent />
       },
       {
-        path: "/signOut",
+        path: '/signOut',
         loader: async () => {
           console.log('signOut1')
           await signOut()
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         }
       },
       {
-        path: "/signInFinish",
+        path: '/signInFinish',
         loader: async () => {
           console.log('signInFinish1')
           try {
@@ -68,12 +68,12 @@ const router = createBrowserRouter([
         element: <div>Finish Sign Up</div>
       },
       {
-        path: "*",
-        element: <Alert severity="error">Page not found</Alert>
+        path: '*',
+        element: <Alert severity='error'>Page not found</Alert>
       }
     ]
   }
-]);
+])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

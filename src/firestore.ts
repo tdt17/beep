@@ -1,20 +1,20 @@
-import { initializeApp } from "firebase/app"
-import { User, getAuth, isSignInWithEmailLink, createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, sendEmailVerification } from "firebase/auth";
-import { deleteField, doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore"
-import { comparer, makeAutoObservable, reaction, runInAction } from "mobx";
-import { log } from "./config";
-import { redirect } from "react-router-dom";
-import dayjs, { Dayjs } from "dayjs";
+import { initializeApp } from 'firebase/app'
+import { User, getAuth, isSignInWithEmailLink, createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, sendEmailVerification } from 'firebase/auth'
+import { deleteField, doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
+import { comparer, makeAutoObservable, reaction, runInAction } from 'mobx'
+import { log } from './config'
+import { redirect } from 'react-router-dom'
+import dayjs, { Dayjs } from 'dayjs'
 
 
 const SESSION_KEY_NEXT_HREF = 'redirectAfterLogin'
 const firebaseConfig = {
-  apiKey: "AIzaSyBRG6R9wxEjXYSvm0DN7ILYAlgGozaMg1M",
-  authDomain: "ac-beep.firebaseapp.com",
-  projectId: "ac-beep",
-  storageBucket: "ac-beep.appspot.com",
-  messagingSenderId: "938267738524",
-  appId: "1:938267738524:web:b8ff0e5d00371af05cc859"
+  apiKey: 'AIzaSyBRG6R9wxEjXYSvm0DN7ILYAlgGozaMg1M',
+  authDomain: 'ac-beep.firebaseapp.com',
+  projectId: 'ac-beep',
+  storageBucket: 'ac-beep.appspot.com',
+  messagingSenderId: '938267738524',
+  appId: '1:938267738524:web:b8ff0e5d00371af05cc859'
 }
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
@@ -39,11 +39,11 @@ export const state = makeAutoObservable({
   get userDays(): { [day: string]: TableName } {
     return Object.fromEntries(Object.entries(state.mergedMonthData.days)
       .map(([day, users]) => [day, users[state.user?.uid || '']])
-      .filter(([_, table]) => table)
+      .filter(([, table]) => table)
     )
   },
   get daysTableCounts(): { [day: string]: { [tableName: string]: number } } {
-    return Object.fromEntries(Object.entries(state.mergedMonthData.days).map(([day, users]) => [day, 
+    return Object.fromEntries(Object.entries(state.mergedMonthData.days).map(([day, users]) => [day,
       Object.values(users).reduce((counts, tableName) => ({ ...counts, [tableName]: (counts[tableName] || 0) + 1 }), {} as { [tableName: string]: number })
     ]))
   },
@@ -86,7 +86,7 @@ export async function initState() {
       const month = dayjs(`${loadParams.year}-${loadParams.month}`)
       const monthKeys = [month.add(-1, 'month'), month, month.add(1, 'month')].map(calcMonthKey)
       monthKeys.forEach(monthKey => {
-        const docRef = doc(firestore, "spaces", space, "month", monthKey)
+        const docRef = doc(firestore, 'spaces', space, 'month', monthKey)
         const unsubscribe = onSnapshot(docRef, (snapshot) => {
           if (!snapshot.exists()) {
             return
@@ -105,10 +105,10 @@ export async function initState() {
       })
     }
   }, { equals: comparer.structural })
-  
-  reaction(() => ({ space: state.space}), ({space}) => {
+
+  reaction(() => ({ space: state.space }), ({ space }) => {
     if (!space) return
-    const docRef = doc(firestore, "spaces", space)
+    const docRef = doc(firestore, 'spaces', space)
     onSnapshot(docRef, (snapshot) => {
       if (!snapshot.exists()) {
         return
@@ -119,9 +119,9 @@ export async function initState() {
     })
   }, { equals: comparer.structural })
 
-  reaction(() => ({ space: state.space, uid: state.user?.uid}), ({space, uid}) => {
+  reaction(() => ({ space: state.space, uid: state.user?.uid }), ({ space, uid }) => {
     if (!space || !uid) return
-    const docRef = doc(firestore, "spaces", space, "users", uid)
+    const docRef = doc(firestore, 'spaces', space, 'users', uid)
     onSnapshot(docRef, (snapshot) => {
       runInAction(() => {
         state.userData = snapshot.data() || {}
@@ -176,14 +176,14 @@ export async function checkIsSignInWithEmailLink() {
 
 export async function setDayInOffice(day: Dayjs, tableName: TableName | null) {
   if (!state.space || !state.user) return
-  const docRef = doc(firestore, "spaces", state.space, "month", calcMonthKey(day))
+  const docRef = doc(firestore, 'spaces', state.space, 'month', calcMonthKey(day))
   await setDoc(docRef, { days: { [calcDayKey(day)]: { [state.user.uid]: tableName || deleteField() } } }, { merge: true })
 }
 
 
 export async function setUserData(userData: Partial<UserData>) {
   if (!state.space || !state.user) return
-  const docRef = doc(firestore, "spaces", state.space!, "users", state.user.uid)
+  const docRef = doc(firestore, 'spaces', state.space!, 'users', state.user.uid)
   await setDoc(docRef, userData, { merge: true })
 }
 

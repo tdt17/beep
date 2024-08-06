@@ -5,8 +5,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { Box, Container, CssBaseline, useMediaQuery } from '@mui/material'
 import { useMemo } from 'react'
 
-function App() {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+export const App: React.FC = observer(() => {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
   const theme = useMemo(
     () =>
@@ -16,11 +16,11 @@ function App() {
         },
       }),
     [prefersDarkMode],
-  );
+  )
 
   return <ThemeProvider theme={theme}>
     <CssBaseline />
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <Box
         sx={{
           marginTop: 8,
@@ -35,6 +35,4 @@ function App() {
       </Box>
     </Container>
   </ThemeProvider>
-}
-
-export default observer(App)
+})

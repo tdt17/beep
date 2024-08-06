@@ -1,9 +1,9 @@
-import React, { FormEvent, useState } from 'react';
-import { signInByPassword, signUpByPassword } from '../firestore';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Box, Button, TextField, Typography } from '@mui/material';
-import { log } from '../config';
-import { AuthErrorCodes } from 'firebase/auth';
+import React, { FormEvent, useState } from 'react'
+import { signInByPassword, signUpByPassword } from '../firestore'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Alert, Box, Button, TextField, Typography } from '@mui/material'
+import { log } from '../config'
+import { AuthErrorCodes } from 'firebase/auth'
 
 const validate = (email: string, password: string, passwordConfirm: string | null, space: string | null): string[] => {
   const errors = []
@@ -51,7 +51,7 @@ export const SignInByPassword: React.FC = () => {
         return
       }
       await signInByPassword(email, password)
-    } catch (e: any) {
+    } catch (e: any) { // eslint-disable-line
       if (e?.code === AuthErrorCodes.EMAIL_EXISTS) {
         log('email exists', e)
         setErrors(['Email already exists'])
@@ -63,43 +63,43 @@ export const SignInByPassword: React.FC = () => {
   }
 
   return <div>
-    <Typography component="h1" variant="h5">
+    <Typography component='h1' variant='h5'>
       Sign in
     </Typography>
     {errors.map((error, i) => <Alert key={i} severity='error'>{error}</Alert>)}
-    <Box component="form" ref={formRef} onSubmit={signInUp()} noValidate sx={{ mt: 1 }}>
+    <Box component='form' ref={formRef} onSubmit={signInUp()} noValidate sx={{ mt: 1 }}>
       <TextField
-        margin="normal"
+        margin='normal'
         required
         fullWidth
-        id="email"
+        id='email'
         label={`Email Address${space ? `(use @${space})` : ''}`}
-        name="email"
-        autoComplete="email"
+        name='email'
+        autoComplete='email'
         autoFocus
       />
       <TextField
-        margin="normal"
+        margin='normal'
         required
         fullWidth
-        name="password"
-        label="Password"
-        type="password"
-        id="password"
-        autoComplete="current-password"
+        name='password'
+        label='Password'
+        type='password'
+        id='password'
+        autoComplete='current-password'
       />
       <Button
-        type="submit"
+        type='submit'
         fullWidth
-        variant="contained"
+        variant='contained'
         sx={{ mt: 3, mb: 2 }}
       >
         Sign In
       </Button>
       <Button
-        type="button"
+        type='button'
         fullWidth
-        variant="contained"
+        variant='contained'
         sx={{ mt: 3, mb: 2 }}
         onClick={signInUp(true)}
       >

@@ -1,10 +1,8 @@
-import { makeAutoObservable } from "mobx"
-
-export const config = makeAutoObservable({
+export const config = {
     debug: !!localStorage.getItem('DEBUG') || import.meta.env.VITE_DEBUG === 'true',
-})
+}
 
-export const log = (...args: any[]) => {
+export const log = (...args: unknown[]) => {
     if (config.debug) {
         console.log(...args)
     }

@@ -1,13 +1,13 @@
-import { Alert, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, styled } from '@mui/material';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { calcDayKey, setDayInOffice, setUserData, state } from '../firestore';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import { Dayjs } from 'dayjs';
-import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
-import { runInAction } from 'mobx';
+import { Alert, Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, styled } from '@mui/material'
+import { observer } from 'mobx-react-lite'
+import React from 'react'
+import { calcDayKey, setDayInOffice, setUserData, state } from '../firestore'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
+import { Dayjs } from 'dayjs'
+import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay'
+import { runInAction } from 'mobx'
 
 const calcBackgroundColor = (count: number, max: number) => {
   if (!count || !max || count < max - 1) return '#66bb6a'
@@ -54,7 +54,7 @@ const Day: React.FC<PickersDayProps<Dayjs>> = observer(({ day, ...other }) => {
 
 const Month: React.FC = observer(() => {
   return (<>
-    <Typography component="h1" variant="h5">
+    <Typography component='h1' variant='h5'>
       Office days
     </Typography>
     {state.tableName ?
@@ -70,18 +70,20 @@ const Month: React.FC = observer(() => {
           views={['day']}
         />
       </LocalizationProvider>
-      : <Typography variant="body1">Please select a table to continue</Typography>
+      : <Typography variant='body1'>Please select a table to continue</Typography>
     }
     <TablePicker />
-    <Alert severity='info'>
-      Click on a day to toggle your presence in the office.
-    </Alert>
-    <Alert severity='info'>
-      The number in the bottom right corner of each day shows how many people are already on your selected table.
-    </Alert>
-    <Alert severity='info'>
-      The color indicates if there are still free seats (green), only one seat left (orange), or no more seats available (red) - overbooking is allowed.
-    </Alert>
+    {state.tableName && <Box marginTop={2}>
+      <Alert severity='info'>
+        Click on a day to toggle your presence in the office.
+      </Alert>
+      <Alert severity='info'>
+        The number in the bottom right corner of each day shows how many people are already on your selected table.
+      </Alert>
+      <Alert severity='info'>
+        The color indicates if there are still free seats (green), only one seat left (orange), or no more seats available (red) - overbooking is allowed.
+      </Alert>
+    </Box>}
   </>)
 })
 
@@ -91,12 +93,12 @@ const TablePicker: React.FC = observer(() => {
   }
 
   return <FormControl variant='standard' size='small' sx={{ m: 1, minWidth: 120 }}>
-    <InputLabel id="table-label">Table</InputLabel>
+    <InputLabel id='table-label'>Table</InputLabel>
     <Select
-      labelId="table-label"
-      id="table"
+      labelId='table-label'
+      id='table'
       value={state.tableName}
-      label="Table"
+      label='Table'
       onChange={handleChange}
     >
       {Object.entries(state.spaceData.tableNameCounts).map(([tableName, count]) =>

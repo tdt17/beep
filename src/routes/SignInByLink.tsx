@@ -1,28 +1,68 @@
-import React from 'react';
-import { signInByLink } from '../firestore';
-import { ActionFunction, Form, redirect, useNavigation } from 'react-router-dom';
-import { log } from '../config';
+import React, { FormEvent, useState } from 'react'
+import { signInByLink } from '../firestore'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Alert, Box, Button, TextField, Typography } from '@mui/material'
 
-export const signInByLinkAction: ActionFunction = async ({request}) => {
-  const formData = await request.formData()
-  const email = formData.get('email')
-  log('signInLinkAction', email)
+const validate = (email: string, space: string | null): string[] => {
+  const errors = []
   if (!email || typeof email !== 'string') {
-    return redirect(`/signInByLink`)
+    errors.push('Email is required')
+  } else if (space && !email.endsWith(`@${space}`)) {
+    errors.push(`Please use your @${space} email`)
   }
-  await signInByLink(email)
-  return redirect(`/signInSent?email=${email}`)
+  return errors
 }
 
 export const SignInByLink: React.FC = () => {
-  const navigation = useNavigation();
-  const busy = navigation.state === "submitting";
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const [errors, setErrors] = useState<string[]>([])
+  const space = searchParams.get('space')
+
+  const signIn = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!formRef.current) {
+      setErrors(['Something went wrong'])
+      return
+    }
+    const formData = new FormData(formRef.current)
+    const email = formData.get('email') as string
+
+    const errorsErrors = validate(email, space)
+    if (errorsErrors.length > 0) {
+      setErrors(errorsErrors)
+      return
+    }
+
+    await signInByLink(email)
+    navigate(`/signInSent?email=${email}`)
+  }
 
   return <div>
-    <div>Sign In</div>
-    <Form method="post" action="/sendSignInLink">
-      Email: <input type='text' name="email"/>
-      <button type="submit" disabled={busy}> {busy ? "Creating..." : "Sign In"}</button>
-    </Form>
+    <Typography component='h1' variant='h5'>
+      Sign in
+    </Typography>
+    {errors.map((error, i) => <Alert key={i} severity='error'>{error}</Alert>)}
+    <Box component='form' ref={formRef} onSubmit={signIn} noValidate sx={{ mt: 1 }}>
+      <TextField
+        margin='normal'
+        required
+        fullWidth
+        id='email'
+        label={`Email Address${space ? `(use @${space})` : ''}`}
+        name='email'
+        autoComplete='email'
+        autoFocus
+      />
+      <Button
+        type='submit'
+        fullWidth
+        variant='contained'
+        sx={{ mt: 3, mb: 2 }}
+      >
+        Sign Up
+      </Button>
+    </Box>
   </div>
 }
