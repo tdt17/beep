@@ -10,18 +10,19 @@ import { SignInSent } from './routes/SignInSent.tsx'
 import { runInAction } from 'mobx'
 import { Alert } from '@mui/material'
 import dayjs from 'dayjs'
+import { config } from './config.ts'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: config.basePath,
     element: <App />,
     children: [
       {
-        path: '/',
-        loader: async () => redirect(`/month`)
+        path: '',
+        loader: async () => redirect(`./month`)
       },
       {
-        path: '/month',
+        path: 'month',
         element: <Month />,
         loader: async () => {
           const date = dayjs()
@@ -30,40 +31,36 @@ const router = createBrowserRouter([
         }
       },
       {
-        path: '/signIn',
+        path: 'signIn',
         element: <SignInByPassword />,
       },
       {
-        path: '/signInByLink',
+        path: 'signInByLink',
         element: <SignInByLink />,
       },
       {
-        path: '/signInSent',
+        path: 'signInSent',
         element: <SignInSent />
       },
       {
-        path: '/signOut',
+        path: 'signOut',
         loader: async () => {
-          console.log('signOut1')
           await signOut()
-          console.log('signOut2')
-          return redirect('/signIn')
+          return redirect('./signIn')
         }
       },
       {
-        path: '/signInFinish',
+        path: 'signInFinish',
         loader: async () => {
-          console.log('signInFinish1')
           try {
             await checkIsSignInWithEmailLink()
           } catch (e) {
             state.status = 'error'
             state.errorMessage = 'Error signing in with email link. Please try again.'
             console.error(e)
-            return redirect('/signIn')
+            return redirect('./signIn')
           }
-          console.log('signInFinish2')
-          return redirect('/')
+          return redirect('./')
         },
         element: <div>Finish Sign Up</div>
       },

@@ -2,8 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { User, getAuth, isSignInWithEmailLink, createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, sendEmailVerification } from 'firebase/auth'
 import { deleteField, doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
 import { comparer, makeAutoObservable, reaction, runInAction } from 'mobx'
-import { log } from './config'
-import { redirect } from 'react-router-dom'
+import { config, log } from './config'
 import dayjs, { Dayjs } from 'dayjs'
 
 
@@ -65,17 +64,19 @@ export async function initState() {
         log('login success', user)
         if (!user.emailVerified) {
           console.log('email not verified')
-          redirect('/signInSent?email=' + user.email)
+          location.href = `${config.basePath}signInSent?email=${user.email}`
         }
-        if (location.pathname.startsWith('/signIn')) {
-          location.href = localStorage.getItem(SESSION_KEY_NEXT_HREF) || '/'
+        if (location.pathname.startsWith(`${config.basePath}signIn`)) {
+          location.href = localStorage.getItem(SESSION_KEY_NEXT_HREF) || config.basePath
         }
         state.user = user
-      } else if (!location.pathname.startsWith('/signIn')) {
-        if (location.pathname !== '/signOut') {
+      } else if (!location.pathname.startsWith(`${config.basePath}signIn`)) {
+        if (location.pathname !== `${config.basePath}signOut`) {
           localStorage.setItem(SESSION_KEY_NEXT_HREF, location.href)
         }
-        location.href = '/signIn'
+        location.href = `${config.basePath}signIn`
+      } else {
+        state.status = 'ready'
       }
     })
   })
@@ -150,9 +151,9 @@ export async function signUpByPassword(email: string, password: string) {
 export async function signInByLink(email: string) {
   const search = new URLSearchParams()
   search.set('email', email)
-  search.set('next', localStorage.getItem(SESSION_KEY_NEXT_HREF) || '/')
+  search.set('next', localStorage.getItem(SESSION_KEY_NEXT_HREF) || config.basePath)
   const actionCodeSettings = {
-    url: `${location.origin}/signInFinish?${search.toString()}`,
+    url: `${location.origin}${config.basePath}signInFinish?${search.toString()}`,
     handleCodeInApp: true
   }
   log('signIn', auth, email, actionCodeSettings)
@@ -169,7 +170,7 @@ export async function checkIsSignInWithEmailLink() {
     await signInWithEmailLink(auth, email, location.href)
       .then((result) => {
         log('login with link success', result)
-        location.href = search.get('next') || '/'
+        location.href = search.get('next') || config.basePath
       })
   }
 }

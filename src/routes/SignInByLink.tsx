@@ -36,7 +36,7 @@ export const SignInByLink: React.FC = () => {
     }
 
     await signInByLink(email)
-    navigate(`/signInSent?email=${email}`)
+    navigate(`./signInSent?email=${email}`)
   }
 
   return <div>

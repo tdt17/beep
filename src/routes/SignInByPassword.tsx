@@ -47,7 +47,7 @@ export const SignInByPassword: React.FC = () => {
     try {
       if (create) {
         await signUpByPassword(email, password)
-        navigate(`/signInSent?email=${email}`)
+        navigate(`./signInSent?email=${email}`)
         return
       }
       await signInByPassword(email, password)
