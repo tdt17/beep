@@ -45,7 +45,7 @@ const Day: React.FC<PickersDayProps<Dayjs>> = observer(({ day, ...other }) => {
     selected={isActive}
   />
     {weekDay && <Count
-      style={{ backgroundColor: calcBackgroundColor(count, countMax) }}
+      style={{ backgroundColor: calcBackgroundColor(count, countMax), opacity: other.disabled? 0.4 : 1 }}
     >
       {count}
     </Count>}
