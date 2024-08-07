@@ -52,6 +52,9 @@ export const state = makeAutoObservable({
     }
     return ''
   },
+  get isAdmin(): boolean {
+    return (state.spaceData.admins || []).includes(state.user?.email ?? '')
+  }
 })
 log('state', state)
 // autorun(() => console.log('state', toJS(state)))
@@ -184,8 +187,14 @@ export async function setDayInOffice(day: Dayjs, tableName: TableName | null) {
 
 export async function setUserData(userData: Partial<UserData>) {
   if (!state.space || !state.user) return
-  const docRef = doc(firestore, 'spaces', state.space!, 'users', state.user.uid)
+  const docRef = doc(firestore, 'spaces', state.space, 'users', state.user.uid)
   await setDoc(docRef, userData, { merge: true })
+}
+
+export async function setSpaceData(spaceData: Partial<SpaceData>) {
+  if (!state.space || !state.user) return
+  const docRef = doc(firestore, 'spaces', state.space)
+  await setDoc(docRef, spaceData)
 }
 
 export const calcMonthKey = (day: Dayjs) => day.format('YYYY-MM')

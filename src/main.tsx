@@ -12,6 +12,7 @@ import { Alert } from '@mui/material'
 import dayjs from 'dayjs'
 import { config } from './config.ts'
 import { Logo } from './routes/Logo.tsx'
+import { Admin } from './routes/Admin.tsx'
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
           runInAction(() => state.loadParams = { type: 'month', year: date.year(), month: date.month() })
           return null
         }
+      },
+      { 
+        path: 'admin',
+        element: <Admin />
       },
       {
         path: 'logo',

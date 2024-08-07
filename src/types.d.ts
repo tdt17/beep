@@ -5,6 +5,7 @@ type UserData = {
 }
 
 type SpaceData = {
+  admins: string[]
   tableNameCounts: {
     [tableName: TableName]: number
   }

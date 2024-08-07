@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { NavLink, Outlet, Route, Routes } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { state } from './firestore'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -21,6 +21,12 @@ export const App: React.FC = observer(() => {
   return <ThemeProvider theme={theme}>
     <CssBaseline />
     <Container component='main' maxWidth='xs'>
+      {state.isAdmin && <div style={{position: 'absolute', top: 10, right: 10}}>
+        <Routes>
+          <Route path='admin' element={<NavLink to='../month'>back</NavLink>} />
+          <Route path='*' element={<NavLink to='./admin'>admin</NavLink>} />
+        </Routes>
+      </div>}
       <Box
         sx={{
           marginTop: 8,
