@@ -1,0 +1,14 @@
+{
+  "name": "Back-to-Office Employee Engagement Platform",
+  "short_name": "BEEP",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Tool to coordinate presence in the office",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any"
+    }
+  ]
+}
