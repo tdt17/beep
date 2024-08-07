@@ -74,10 +74,17 @@ export async function initState() {
         log('login success', user)
         if (!user.emailVerified) {
           console.log('email not verified')
-          location.href = `${config.basePath}signInSent?email=${user.email}`
+          if (!location.pathname.startsWith(`${config.basePath}signInSent`)) {
+            location.href = `${config.basePath}signInSent?email=${user.email}`
+          }
+          state.user = user
+          state.status = 'ready'
+          return
         }
         if (location.pathname.startsWith(`${config.basePath}signIn`)) {
-          location.href = localStorage.getItem(SESSION_KEY_NEXT_HREF) || config.basePath
+          const next = localStorage.getItem(SESSION_KEY_NEXT_HREF)
+          localStorage.removeItem(SESSION_KEY_NEXT_HREF)
+          location.href = next || config.basePath
         }
         state.user = user
       } else if (!location.pathname.startsWith(`${config.basePath}signIn`) && location.pathname !== `${config.basePath}logo`) {
