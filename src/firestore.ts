@@ -5,7 +5,6 @@ import { comparer, makeAutoObservable, reaction, runInAction } from 'mobx'
 import { config, log } from './config'
 import dayjs, { Dayjs } from 'dayjs'
 
-
 const SESSION_KEY_NEXT_HREF = 'redirectAfterLogin'
 const firebaseConfig = {
   apiKey: 'AIzaSyBRG6R9wxEjXYSvm0DN7ILYAlgGozaMg1M',
@@ -29,22 +28,30 @@ export const state = makeAutoObservable({
   loadParams: null as null | { type: 'month', year: number, month: number },
   userData: {} as Partial<UserData>,
   spaceData: { tableNameCounts: {} } as SpaceData,
-  monthData: {} as { [month: string]: MonthData },
-  get mergedMonthData(): MonthData {
-    return {
-      days: Object.assign({}, ...Object.values(state.monthData).map(({ days }) => days))
-    }
+  monthData: {} as { [month: string]: Partial<MonthData> },
+  get mergedMonthData(): Partial<MonthData> {
+    const merged = Object.values(state.monthData).reduce(({ users = {} }, { users: add = {} }) => {
+      users = { ...users }
+      Object.entries(add).forEach(([uid, days]) => {
+        users[uid] = { ...users[uid], ...days }
+      })
+      return { users }
+    })
+    return merged
   },
   get userDays(): { [day: string]: TableName } {
-    return Object.fromEntries(Object.entries(state.mergedMonthData.days)
-      .map(([day, users]) => [day, users[state.user?.uid || '']])
-      .filter(([, table]) => table)
-    )
+    return state.mergedMonthData.users?.[state.user?.uid ?? ''] || {}
   },
   get daysTableCounts(): { [day: string]: { [tableName: string]: number } } {
-    return Object.fromEntries(Object.entries(state.mergedMonthData.days).map(([day, users]) => [day,
-      Object.values(users).reduce((counts, tableName) => ({ ...counts, [tableName]: (counts[tableName] || 0) + 1 }), {} as { [tableName: string]: number })
-    ]))
+    return Object.values(state.mergedMonthData?.users ?? {}).reduce((acc, days) => {
+      Object.entries(days).forEach(([day, tableName]) => {
+        if (!acc[day]) {
+          acc[day] = {}
+        }
+        acc[day][tableName] = (acc[day][tableName] || 0) + 1
+      })
+      return acc
+    }, {} as { [day: string]: { [tableName: string]: number }})
   },
   get tableName(): TableName {
     if (state.userData.tableName && state.userData.tableName in state.spaceData.tableNameCounts) {
@@ -181,7 +188,7 @@ export async function checkIsSignInWithEmailLink() {
 export async function setDayInOffice(day: Dayjs, tableName: TableName | null) {
   if (!state.space || !state.user) return
   const docRef = doc(firestore, 'spaces', state.space, 'month', calcMonthKey(day))
-  await setDoc(docRef, { days: { [calcDayKey(day)]: { [state.user.uid]: tableName || deleteField() } } }, { merge: true })
+  await setDoc(docRef, { users: { [state.user.uid]: { [calcDayKey(day)]: tableName || deleteField() } } }, { merge: true })
 }
 
 

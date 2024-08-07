@@ -12,9 +12,9 @@ type SpaceData = {
 }
 
 type MonthData = {
-  days: {
-    [day: string]: {
-      [uid: string]: TableName
+  users: {
+    [uid: string]: {
+      [day: string]: TableName
     }
   }
 }
