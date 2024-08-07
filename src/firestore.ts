@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { User, getAuth, isSignInWithEmailLink, createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, sendEmailVerification } from 'firebase/auth'
 import { deleteField, doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
-import { comparer, makeAutoObservable, reaction, runInAction } from 'mobx'
+import { autorun, comparer, makeAutoObservable, reaction, runInAction, toJS } from 'mobx'
 import { config, log } from './config'
 import dayjs, { Dayjs } from 'dayjs'
 
@@ -64,17 +64,18 @@ export const state = makeAutoObservable({
   }
 })
 log('state', state)
-// autorun(() => console.log('state', toJS(state)))
+// autorun(() => console.log('state', toJS(state), state.space))
 
 export async function initState() {
   await checkIsSignInWithEmailLink()
+  let first = true
   auth.onAuthStateChanged(user => {
     runInAction(() => {
       if (user) {
         log('login success', user)
         if (!user.emailVerified) {
           console.log('email not verified')
-          if (!location.pathname.startsWith(`${config.basePath}signInSent`)) {
+          if (first && !location.pathname.startsWith(`${config.basePath}signInSent`)) {
             location.href = `${config.basePath}signInSent?email=${user.email}`
           }
           state.user = user
@@ -96,6 +97,7 @@ export async function initState() {
         state.status = 'ready'
       }
     })
+    first = false
   })
 
   reaction(() => ({ space: state.space, loadParams: state.loadParams }), async ({ space, loadParams }) => {
@@ -112,7 +114,7 @@ export async function initState() {
           runInAction(() => {
             state.monthData[monthKey] = snapshot.data() as MonthData || null
           })
-        })
+        }, (e) => console.error('error loading month data', e))
         loadUnsubscribes[monthKey] = unsubscribe
       })
       Object.entries(loadUnsubscribes).forEach(([monthKey, unsubscribe]) => {
@@ -134,7 +136,7 @@ export async function initState() {
       runInAction(() => {
         state.spaceData = snapshot.data() as SpaceData || {}
       })
-    })
+    }, (e) => console.error('error loading space data', e))
   }, { equals: comparer.structural })
 
   reaction(() => ({ space: state.space, uid: state.user?.uid }), ({ space, uid }) => {
@@ -145,7 +147,7 @@ export async function initState() {
         state.userData = snapshot.data() || {}
         state.status = 'ready'
       })
-    })
+    }, (e) => console.error('error loading user data', e))
   }, { equals: comparer.structural })
 }
 

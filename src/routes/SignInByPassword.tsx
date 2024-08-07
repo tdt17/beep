@@ -96,6 +96,10 @@ export const SignInByPassword: React.FC = () => {
       >
         Sign In
       </Button>
+      <Typography variant='caption'>
+        Don't have an account?<br />
+        Just enter a new Email and Password and press "Sign Up".
+      </Typography>
       <Button
         type='button'
         fullWidth
