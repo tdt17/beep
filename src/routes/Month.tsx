@@ -37,7 +37,7 @@ const Day: React.FC<PickersDayProps<Dayjs>> = observer(({ day, ...other }) => {
   const weekDay = day.day() !== 0 && day.day() !== 6
   const isActive = !!state.userDays[dayKey]
   const count = state.daysTableCounts[dayKey]?.[state.tableName]
-  const countMax = state.spaceData.tableNameCounts[state.tableName]
+  const countMax = state.spaceData.tableNamesSeats[state.tableName]
   return <div style={{ position: 'relative' }}><PickersDay
     {...other}
     day={day}
@@ -101,7 +101,7 @@ const TablePicker: React.FC = observer(() => {
       label='Table'
       onChange={handleChange}
     >
-      {Object.entries(state.spaceData.tableNameCounts).map(([tableName, count]) =>
+      {Object.entries(state.spaceData.tableNamesSeats).map(([tableName, count]) =>
         <MenuItem key={tableName} value={tableName}>{tableName} ({count} Seats)</MenuItem>
       )}
     </Select>

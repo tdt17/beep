@@ -27,7 +27,7 @@ export const state = makeAutoObservable({
   },
   loadParams: null as null | { type: 'month', year: number, month: number },
   userData: {} as Partial<UserData>,
-  spaceData: { tableNameCounts: {} } as SpaceData,
+  spaceData: { tableNamesSeats: {} } as SpaceData,
   monthData: {} as { [month: string]: Partial<MonthData> },
   get mergedMonthData(): Partial<MonthData> {
     const merged = Object.values(state.monthData).reduce(({ users = {} }, { users: add = {} }) => {
@@ -54,7 +54,7 @@ export const state = makeAutoObservable({
     }, {} as { [day: string]: { [tableName: string]: number }})
   },
   get tableName(): TableName {
-    if (state.userData.tableName && state.userData.tableName in state.spaceData.tableNameCounts) {
+    if (state.userData.tableName && state.userData.tableName in state.spaceData.tableNamesSeats) {
       return state.userData.tableName
     }
     return ''
