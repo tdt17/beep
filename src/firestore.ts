@@ -1,11 +1,12 @@
 import { initializeApp } from 'firebase/app'
 import { User, getAuth, isSignInWithEmailLink, createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, sendEmailVerification } from 'firebase/auth'
 import { deleteField, doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
-import { autorun, comparer, makeAutoObservable, reaction, runInAction, toJS } from 'mobx'
+import { comparer, makeAutoObservable, reaction, runInAction } from 'mobx'
 import { config, log } from './config'
 import dayjs, { Dayjs } from 'dayjs'
 
 const SESSION_KEY_NEXT_HREF = 'redirectAfterLogin'
+const SESSION_KEY_LOGIN_LAST_RETRIED = 'loginLastRetried'
 const firebaseConfig = {
   apiKey: 'AIzaSyBRG6R9wxEjXYSvm0DN7ILYAlgGozaMg1M',
   authDomain: 'ac-beep.firebaseapp.com',
@@ -147,7 +148,15 @@ export async function initState() {
         state.userData = snapshot.data() || {}
         state.status = 'ready'
       })
-    }, (e) => console.error('error loading user data', e))
+    }, async (e) => { 
+      console.error('error loading user data', e)
+      const lastRetried = localStorage.getItem(SESSION_KEY_LOGIN_LAST_RETRIED)
+      if (lastRetried === null || new Date(lastRetried).getTime() < Date.now() - 5 * 60 * 1000) {
+        localStorage.setItem(SESSION_KEY_LOGIN_LAST_RETRIED, new Date().toISOString())
+        await state.user?.getIdToken(true)
+        location.reload()
+      }
+    })
   }, { equals: comparer.structural })
 }
 
