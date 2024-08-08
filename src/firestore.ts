@@ -7,6 +7,8 @@ import dayjs, { Dayjs } from 'dayjs'
 
 const SESSION_KEY_NEXT_HREF = 'redirectAfterLogin'
 const SESSION_KEY_LOGIN_LAST_RETRIED = 'loginLastRetried'
+export const TEAM_KEY = 'MY_TEAM_COUNT'
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBRG6R9wxEjXYSvm0DN7ILYAlgGozaMg1M',
   authDomain: 'ac-beep.firebaseapp.com',
@@ -43,13 +45,20 @@ export const state = makeAutoObservable({
   get userDays(): { [day: string]: TableName } {
     return state.mergedMonthData.users?.[state.user?.uid ?? ''] || {}
   },
+  get teamUIds(): string[] | null {
+    if (!state.user?.uid || !state.userData.teamIds?.length) return null
+    return [state.user.uid, ...state.userData.teamIds]
+  },
   get daysTableCounts(): { [day: string]: { [tableName: string]: number } } {
-    return Object.values(state.mergedMonthData?.users ?? {}).reduce((acc, days) => {
+    return Object.entries(state.mergedMonthData?.users ?? {}).reduce((acc, [uid, days]) => {
       Object.entries(days).forEach(([day, tableName]) => {
         if (!acc[day]) {
           acc[day] = {}
         }
         acc[day][tableName] = (acc[day][tableName] || 0) + 1
+        if (state.teamUIds && state.teamUIds.includes(uid)) {
+          acc[day][TEAM_KEY] = (acc[day][TEAM_KEY] || 0) + 1
+        }
       })
       return acc
     }, {} as { [day: string]: { [tableName: string]: number }})
@@ -109,11 +118,8 @@ export async function initState() {
       monthKeys.forEach(monthKey => {
         const docRef = doc(firestore, 'spaces', space, 'month', monthKey)
         const unsubscribe = onSnapshot(docRef, (snapshot) => {
-          if (!snapshot.exists()) {
-            return
-          }
           runInAction(() => {
-            state.monthData[monthKey] = snapshot.data() as MonthData || null
+            state.monthData[monthKey] = snapshot.data() || {}
           })
         }, (e) => console.error('error loading month data', e))
         loadUnsubscribes[monthKey] = unsubscribe

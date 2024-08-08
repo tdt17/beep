@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import { config } from './config.ts'
 import { Logo } from './routes/Logo.tsx'
 import { Admin } from './routes/Admin.tsx'
+import { Team } from './routes/Team.tsx'
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,11 @@ const router = createBrowserRouter([
           return null
         }
       },
-      { 
+      {
+        path: 'team',
+        element: <Team />
+      },
+      {
         path: 'admin',
         element: <Admin />
       },

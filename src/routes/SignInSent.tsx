@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { useSearchParams } from 'react-router-dom'
 import { state } from '../firestore'
 import { sendEmailVerification } from 'firebase/auth'
@@ -12,7 +12,7 @@ export const SignInSent: React.FC = () => {
     </Typography>
     <div>Please check your email: {searchParams.get('email')}</div>
     {state.user && !state.user.emailVerified && 
-      <button onClick={() => sendEmailVerification(state.user!)}>Resend Email Verification</button>
+      <Button onClick={() => sendEmailVerification(state.user!)}>Resend Email Verification</Button>
     }
     <div>You may have to reload this page after clicking the link.</div>
   </div>

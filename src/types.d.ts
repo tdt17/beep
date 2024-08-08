@@ -2,6 +2,7 @@ type TableName = string
 
 type UserData = {
   tableName: TableName
+  teamIds: string[]
 }
 
 type SpaceData = {
