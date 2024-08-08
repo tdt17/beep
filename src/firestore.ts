@@ -47,6 +47,9 @@ export const state = makeAutoObservable({
   },
   get teamUIds(): string[] | null {
     if (!state.user?.uid || !state.userData.teamIds?.length) return null
+    if (state.userData.teamIds.includes(state.user.uid)) {
+      return state.userData.teamIds
+    }
     return [state.user.uid, ...state.userData.teamIds]
   },
   get daysTableCounts(): { [day: string]: { [tableName: string]: number } } {
