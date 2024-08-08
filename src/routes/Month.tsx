@@ -122,7 +122,7 @@ const Month: React.FC = observer(() => {
       </Alert>
       <Alert severity='info'>
         <ColorBubble style={{ backgroundColor: calcBackgroundColor(0, 2) }}>X</ColorBubble> = X seats on the table are already taken<br />
-        {state.teamUIds && <><ColorBubble style={{ backgroundColor: '#6093e6' }}>Y</ColorBubble> = Y team members are in the office<br /></>}
+        {state.teamUIds && <><ColorBubble style={{ backgroundColor: '#6093e6' }}>Y</ColorBubble> = Y team members are in the office (self included)<br /></>}
       </Alert>
       <Alert severity='info'>
         <ColorBubble style={{ backgroundColor: calcBackgroundColor(0, 2) }} /> free seats at the currently selected table<br />

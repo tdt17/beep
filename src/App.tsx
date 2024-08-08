@@ -2,7 +2,7 @@ import { NavLink, Outlet, Route, Routes } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { state } from './firestore'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { Box, Container, CssBaseline, useMediaQuery } from '@mui/material'
+import { Box, Container, CssBaseline, Link, useMediaQuery } from '@mui/material'
 import { useMemo } from 'react'
 
 export const App: React.FC = observer(() => {
@@ -23,8 +23,8 @@ export const App: React.FC = observer(() => {
     <Container component='main' maxWidth='xs'>
       {state.isAdmin && <div style={{position: 'absolute', top: 10, right: 10}}>
         <Routes>
-          <Route path='admin' element={<NavLink to='../month'>back</NavLink>} />
-          <Route path='*' element={<NavLink to='./admin'>admin</NavLink>} />
+          <Route path='admin' element={<NavLink to='../month'><Link>back</Link></NavLink>} />
+          <Route path='*' element={<NavLink to='./admin'><Link>admin</Link></NavLink>} />
         </Routes>
       </div>}
       <Box

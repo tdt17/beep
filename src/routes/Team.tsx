@@ -28,7 +28,7 @@ export const Team: React.FC = observer(() => {
       fullWidth
     />
     <Typography variant="caption">
-      Paste here the UIDs of your team:
+      Paste here the UIDs of your team members (one per line):
     </Typography>
     <TextareaAutosize
       value={config}
