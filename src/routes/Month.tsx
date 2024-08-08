@@ -51,6 +51,7 @@ const Day: React.FC<PickersDayProps<Dayjs>> = observer(({ day, ...other }) => {
   const isActive = !!state.userDays[dayKey]
   const count = state.daysTableCounts[dayKey]?.[state.tableName]
   const countMax = state.spaceData.tableNamesSeats[state.tableName]
+  const teamCount = state.daysTableCounts[dayKey]?.[TEAM_KEY]
   return <div style={{ position: 'relative' }}><PickersDay
     {...other}
     day={day}
@@ -66,14 +67,14 @@ const Day: React.FC<PickersDayProps<Dayjs>> = observer(({ day, ...other }) => {
     >
       {count}
     </Count>}
-    {state.teamUIds && weekDay && <Count
+    {teamCount && <Count
       style={{
         backgroundColor: '#6093e6',
         opacity: other.disabled ? 0.6 : 1,
         left: 2,
       }}
     >
-      {state.daysTableCounts[dayKey]?.[TEAM_KEY]}
+      {teamCount}
     </Count>}
   </div>
 })
@@ -82,7 +83,7 @@ const Month: React.FC = observer(() => {
   const ref = React.useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (ref.current) {
-      const scale = Math.min(size.width / 350, 2)
+      const scale = Math.min(size.width / 350, 1.6)
       ref.current.style.transform = `scale(${scale})`
       ref.current.style.margin = `${130 * (scale - 1)}px`
     }
